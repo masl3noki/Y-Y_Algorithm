@@ -55,6 +55,29 @@ int Partition(std::vector<int> &v, int start, int end, char predicate = '<') {
 	
 }
 
+// Generates Random Pivot, swaps pivot with
+// end element and calls the partition function
+/**
+ * @brief Функция-прослойка между partition и интерфейсом quick sort для внедрения вариантов разбиения
+ * 
+ * @param v Вектор на сортировку
+ * @param start Левый итератор
+ * @param end Правый итератор
+ * @param predicate Условие, по которому разделять массив. По умолчанию стоит '<', т.е. массив делится согласно условию "<x"
+ * @return int Номер опорного элемента
+ */
+int Partition_r(std::vector<int> &v, int start, int end, char predicate = '<')
+{
+    // Генерируем рандомное число на компакте [start; end]
+    //srand(time(NULL));
+    int random = start + rand() % (end - start);
+ 
+    // Меняем сгенерированный опорный элемент с последним в векторе, т. о. идея сортировки остается той же, но теперь мы реже натыкаемся на худшие исходы
+    std::swap(v[random], v[end]);
+ 
+    return Partition(v, start, end, predicate);
+}
+
 /**
  * @brief Реализация алгоритма быстрой сортировки, когда опорный элемент в конце любого компакта внутри вектора
  * 
@@ -66,7 +89,7 @@ int Partition(std::vector<int> &v, int start, int end, char predicate = '<') {
 void Quicksort(std::vector<int> &v, int start, int end, char predicate = '<' ) {
     // Рекурсия, которая заканчивается, когда v.size() < 2;
 	if(start < end){
-		int p = Partition(v, start, end, predicate);
+		int p = Partition_r(v, start, end, predicate);
 		Quicksort(v, start, p - 1, predicate);
 		Quicksort(v, p + 1, end, predicate);
 	}
@@ -88,6 +111,7 @@ int main() {
         v.push_back(number);
     }
 	
+    /*
 	std::cout<<"Вектор до сортировки: "<<std::endl;
 	debug_print_vector(v);
 	
@@ -101,6 +125,9 @@ int main() {
 
     std::cout<<"Вектор после сортировки через {>x}: "<<std::endl;
 	debug_print_vector(v);
+    */
+    Quicksort(v, 0, v.size() - 1);
+    debug_print_vector(v);
 
 }
 
