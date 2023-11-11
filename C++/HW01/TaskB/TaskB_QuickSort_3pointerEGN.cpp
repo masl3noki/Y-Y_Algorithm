@@ -2,7 +2,7 @@
 #include <vector>
 #include <random>
 
-void debug_print_vector(std::vector<int>&);
+void debug_print_vector(std::vector<long long>&);
 
 /**
  * @brief Функция проверяет отсортирован ли вектор
@@ -13,7 +13,7 @@ void debug_print_vector(std::vector<int>&);
  * @return true - вектор отсортирован, иначе
  * @return false 
  */
-bool isSortedVector (std::vector<int>& arr, int size) {
+bool isSortedVector (std::vector<long long>& arr, int size) {
     
     for (int i = 0; i < size - 1; i++) {
         if (arr[i] > arr[i + 1]) {
@@ -35,7 +35,7 @@ bool isSortedVector (std::vector<int>& arr, int size) {
  * 
  * @return int Номер опорного элемента
  */
-void Partition(std::vector<int> &v, int start, int end, int& i, int& j, char predicate = '<') {
+void Partition(std::vector<long long> &v, int start, int end, int& i, int& j, char predicate = '<') {
 	
     // Инициализация переменных для scope всей функции
 	int predicate_itr = start; // итератор >x
@@ -119,7 +119,7 @@ void Partition(std::vector<int> &v, int start, int end, int& i, int& j, char pre
  * @param end Правый итератор
  * @param predicate Условие, по которому разделять массив. По умолчанию стоит '<', т.е. массив делится согласно условию "<x"
  */
-void Quicksort_alg(std::vector<int> &v, int start, int end, char predicate = '<' ) {
+void Quicksort_alg(std::vector<long long> &v, int start, int end, char predicate = '<' ) {
     // Рекурсия, которая заканчивается, когда v.size() < 2;
 	if(start < end){
 
@@ -140,7 +140,7 @@ void Quicksort_alg(std::vector<int> &v, int start, int end, char predicate = '<'
  * @param v Вектор на сортировку
  * @param predicate Условие, по которому разделять массив. По умолчанию стоит '<', т.е. массив делится согласно условию "<x"
  */
-void Quicksort(std::vector<int> &v, char predicate = '<' ) {
+void Quicksort(std::vector<long long> &v, char predicate = '<' ) {
     int start = 0;
     int end = v.size() - 1;
 
@@ -156,7 +156,7 @@ int main() {
     std::cin >> n;
 
     // input    
-    std::vector<int> v(n);
+    std::vector<long long> v(n);
     for (int i = 0; i < n; i++) {
         std::cin >> v[i];
     }
@@ -166,7 +166,7 @@ int main() {
 
 }
 
-void debug_print_vector(std::vector<int>& arr) {
+void debug_print_vector(std::vector<long long>& arr) {
     for (int i = 0; i < arr.size(); i++) {
         std::cout << arr[i] << " ";
     }

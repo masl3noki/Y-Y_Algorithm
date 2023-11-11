@@ -1,7 +1,19 @@
 #include <iostream>
 #include <vector>
 
-int Partition_r(std::vector<int> &v, int start, int end)
+bool isSortedVector (std::vector<long long>& arr, int size) {
+    
+    for (int i = 0; i < size - 1; i++) {
+        if (arr[i] > arr[i + 1]) {
+            return false;
+        }
+    }
+
+    return true;
+    
+}
+
+int Partition_r(std::vector<long long> &v, int start, int end)
 {
     // Генерируем рандомное число на компакте [start; end]
     //srand(time(NULL));
@@ -27,7 +39,7 @@ int Partition_r(std::vector<int> &v, int start, int end)
 	return j;
 }
 
-void Quicksort(std::vector<int> &v, int start, int end) {
+void Quicksort(std::vector<long long> &v, int start, int end) {
     // Рекурсия, которая заканчивается, когда v.size() < 2;
 	if(start < end){
 		int p = Partition_r(v, start, end);
@@ -40,7 +52,7 @@ void Quicksort(std::vector<int> &v, int start, int end) {
 int main() {
 	
     int n = 0;
-    std::vector<int> v;
+    std::vector<long long> v;
 
     // input
     std::cin >> n;
@@ -52,7 +64,9 @@ int main() {
         v.push_back(number);
     }
 
-    Quicksort(v, 0, v.size() - 1);
+    if (!isSortedVector(v, v.size())) {
+        Quicksort(v, 0, v.size() - 1);
+    }
     
     for (int i = 0; i < v.size(); i++)
     {

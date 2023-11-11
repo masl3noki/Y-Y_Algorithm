@@ -1,7 +1,26 @@
 #include <iostream>
 #include <vector>
 
-void debug_print_vector(std::vector<int>&);
+void debug_print_vector(std::vector<long long>&);
+
+/**
+ * @brief Функция, которая за O(n) проверяет массив на факт сортировки
+ * 
+ * @param arr вектор для проверки
+ * @param size размер вектора (рудиментарный аргумент)
+ * @return true если вектор отсортирован, иначе 
+ * @return false 
+ */
+bool isSortedVector (std::vector<long long>& arr, int size) {
+    
+    for (int i = 0; i < size - 1; i++) {
+        if (arr[i] > arr[i + 1]) {
+            return false;
+        }
+    }
+
+    return true;
+}
 
 /**
  * @brief Разбиение вектора относительно предиката и опорного номера элемента
@@ -12,7 +31,7 @@ void debug_print_vector(std::vector<int>&);
  * @param predicate Условие, по которому разделять массив. По умолчанию стоит '<', т.е. массив делится согласно условию "<x"
  * @return int Номер опорного элемента
  */
-int Partition(std::vector<int> &v, int start, int end, char predicate = '<') {
+int Partition(std::vector<long long> &v, int start, int end, char predicate = '<') {
 	
     // Инициализация переменных для scope всей функции
     int pivot = end;
@@ -52,11 +71,8 @@ int Partition(std::vector<int> &v, int start, int end, char predicate = '<') {
     }
 	
 	return j;
-	
 }
 
-// Generates Random Pivot, swaps pivot with
-// end element and calls the partition function
 /**
  * @brief Функция-прослойка между partition и интерфейсом quick sort для внедрения вариантов разбиения
  * 
@@ -66,10 +82,9 @@ int Partition(std::vector<int> &v, int start, int end, char predicate = '<') {
  * @param predicate Условие, по которому разделять массив. По умолчанию стоит '<', т.е. массив делится согласно условию "<x"
  * @return int Номер опорного элемента
  */
-int Partition_r(std::vector<int> &v, int start, int end, char predicate = '<')
+int Partition_r(std::vector<long long> &v, int start, int end, char predicate = '<')
 {
     // Генерируем рандомное число на компакте [start; end]
-    //srand(time(NULL));
     int random = start + rand() % (end - start);
  
     // Меняем сгенерированный опорный элемент с последним в векторе, т. о. идея сортировки остается той же, но теперь мы реже натыкаемся на худшие исходы
@@ -86,20 +101,31 @@ int Partition_r(std::vector<int> &v, int start, int end, char predicate = '<')
  * @param end Правый итератор
  * @param predicate Условие, по которому разделять массив. По умолчанию стоит '<', т.е. массив делится согласно условию "<x"
  */
-void Quicksort(std::vector<int> &v, int start, int end, char predicate = '<' ) {
+void Quicksort_alg(std::vector<long long> &v, int start, int end, char predicate = '<' ) {
     // Рекурсия, которая заканчивается, когда v.size() < 2;
 	if(start < end){
 		int p = Partition_r(v, start, end, predicate);
-		Quicksort(v, start, p - 1, predicate);
-		Quicksort(v, p + 1, end, predicate);
+		Quicksort_alg(v, start, p - 1, predicate);
+		Quicksort_alg(v, p + 1, end, predicate);
 	}
-	
+}
+
+/**
+ * @brief Оболочка реализации алгоритма быстрой сортировки
+ * 
+ * @param v Вектор на сортировку
+ * @param predicate Условие, по которому разделять массив. По умолчанию стоит '<', т.е. массив делится согласно условию "<x"
+ */
+void Quicksort(std::vector<long long> &v, char predicate = '<' ) {
+    if (!isSortedVector(v, v.size())) {
+        Quicksort_alg(v, 0, v.size() - 1, predicate);
+    }
 }
 
 int main() {
 	
     int n = 0;
-    std::vector<int> v;
+    std::vector<long long> v, v2;
 
     // input
     std::cin >> n;
@@ -110,28 +136,23 @@ int main() {
 
         v.push_back(number);
     }
+    v2 = v;
 	
-    /*
 	std::cout<<"Вектор до сортировки: "<<std::endl;
 	debug_print_vector(v);
 	
-	Quicksort(v,0,v.size()-1);
+	Quicksort(v);
 	
 	std::cout<<"Вектор после сортировки через {<x}: "<<std::endl;
 	debug_print_vector(v);
 
-    std::vector<int> v2 = { 1, 5, 2, 4, 3 };
-    Quicksort(v,0,v.size()-1, '>');
+    Quicksort(v2, '>');
 
     std::cout<<"Вектор после сортировки через {>x}: "<<std::endl;
-	debug_print_vector(v);
-    */
-    Quicksort(v, 0, v.size() - 1);
-    debug_print_vector(v);
-
+	debug_print_vector(v2);
 }
 
-void debug_print_vector(std::vector<int>& arr) {
+void debug_print_vector(std::vector<long long>& arr) {
     for (int i = 0; i < arr.size(); i++)
     {
         std::cout << arr[i] << " ";
