@@ -13,13 +13,15 @@
  * @param p_pow Вектор степеней полинома
  * @return std::vector <long long> возвращает вектор хешей
  */
-std::vector <long long> compute_hash_vector(std::string const& strg, std::vector<long long> const& p_pow) {
+std::vector <long long> compute_hash_vector(std::string const& strg, std::vector<long long> const& p_pow, int const& m) {
     int S = strg.size();
     
     std::vector<long long> h(S, 0); 
     for (int i = 0; i < S; i++) {
         h[i] = (strg[i] - 'a' + 1) * p_pow[i];
         if (i) h[i] += h[i-1];
+
+        h[i] %= m;
     }
 
     return h;
@@ -36,17 +38,19 @@ std::vector <long long> compute_hash_vector(std::string const& strg, std::vector
  * @return true если две подстроки равны, иначе
  * @return false 
  */
-bool isEqual(int iter1, int iter2, int sub_strg_size, std::vector <long long> const& h, std::vector <long long> const& p_pow) {
+bool isEqual(int iter1, int iter2, int sub_strg_size, std::vector <long long> const& h, std::vector <long long> const& p_pow, int const& m) {
     // Хеши двух подстрок. if(iter) нужен как раз для причины описанной выше: h[0] может не равняться 0
     long long h1 = h[iter1 + sub_strg_size - 1];
-    if (iter1)  h1 -= h[iter1 - 1];
+    if (iter1) h1 -= h[iter1 - 1];
+    h1 %= m;
 
     long long h2 = h[iter2 + sub_strg_size - 1];
     if (iter2)  h2 -= h[iter2 - 1];
+    h2 %= m;
 
     // Сравнение подстрок
-    if (iter1 < iter2  && ( h1 * p_pow[iter2 - iter1] ) == h2 ||
-    	iter1 > iter2  &&   h1 == ( h2 * p_pow[iter1 - iter2] ) ||
+    if (iter1 < iter2  && ( h1 * p_pow[iter2 - iter1] ) % m == h2   ||
+    	iter1 > iter2  &&   h1 == ( h2 * p_pow[iter1 - iter2] ) % m ||
         iter1 == iter2 &&   h1 == h2 )
     	return true;
     else
@@ -73,7 +77,7 @@ int main() {
         p_pow[i] = (p_pow[i-1] * p);
 
     // Вычисление хешей всех префиксов главной строки
-    auto h = compute_hash_vector(main_strg, p_pow);
+    auto h = compute_hash_vector(main_strg, p_pow, m);
 
     // Обработка запросов
     for (int request = 0; request < requests_count; request++)
@@ -83,7 +87,7 @@ int main() {
         std::cin >> sub_strg_size >> iter_tg1 >> iter_tg2;
 
         // Работа с входными данными
-        if (isEqual(iter_tg1, iter_tg2, sub_strg_size, h, p_pow)) 
+        if (isEqual(iter_tg1, iter_tg2, sub_strg_size, h, p_pow, m)) 
              std::cout << "yes\n";
         else std::cout << "no\n";
     }
