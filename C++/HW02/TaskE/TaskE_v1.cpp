@@ -2,7 +2,7 @@
 #include <vector>
 #include <string>
 #include <algorithm>
-#include <unordered_map>
+#include <unordered_set>
 #include <utility>
 
 /*
@@ -43,43 +43,19 @@ s[4] = 'a';
 template <class T>
 void debug_print_vector(std::vector<T>&);
 
-void debug_print_unmap(std::unordered_map<std::string, int>&);
+void debug_print_unset(std::unordered_set<std::string>&);
 
 /***/
-int count_subpalins_trivial(std::string s) {
-    int count = 0;
-    int n = s.size();
-    
-    for (int len_lst = 1; len_lst <= n; len_lst++)
-    {
-        for (int i = 0; i < n; i++)
-        {
-            std::string target = s.substr(i, len_lst);
+std::unordered_set<std::string> get_unset (std::string& s_for) {
+    std::unordered_set<std::string> unset;
 
-            /* Проверить, что target - палиндром */
-
-            if (i+len_lst >= n)
-            {
-                break;
-            }
-            
-        }
-    }
-
-    return count;
-}
-
-/***/
-std::unordered_map<std::string, int> get_unmap (std::string& s_for) {
-    std::unordered_map< std::string, int > unmap;
-
-    unmap[s_for] = -1; // Вносим ключ всей строки
+    unset.insert(s_for + "0" + std::to_string(s_for.size())); // Вносим ключ всей строки
     for (int k = 1; k < s_for.size(); k++) {
         for (int i = 0; i < s_for.size() - k + 1; i++)
-            unmap[s_for.substr(i, k)+std::to_string(i)+std::to_string(k)] = i; 
+            unset.insert(s_for.substr(i, k)+std::to_string(i)+std::to_string(k)); 
     }
 
-    return unmap;
+    return unset;
 }
 
 int main() {
@@ -88,30 +64,41 @@ int main() {
     std::cin >> target;
 
     // создаем хеш-таблицу средствами c++
-    auto unmap = get_unmap(target);
+    auto unset = get_unset(target);
     //debug_print_unmap(unmap);
 
-    /* осуществляем поиск подпалиндромов */
-    int count = 0;
-    for (int k = 0; k < target.size(); k++) {
-        count++; // мы полагаем, что подстроки длины 1 - палиндромы
-        // Индексы для углубления:
-        int i = k;
-        int j = k;
-
-        // Процесс углубления:
-        while (i >= 0 && j < target.size())
-        {
-            // Индекс i и длина подстроки нужны для поиска ключа
-            int length_substr = j - i;
-
-            // Переворачиваем строку, будем искать ее в unmap
-            std::string s_bac = target.substr(i, length_substr);
+    /* осуществляем поиск подпалиндромов ТРИВИАЛЬНО */
+    int count = 0;// target.size(); // мы полагаем, что подстроки длины 1 - палиндромы
+    for (int k = 1; k <= target.size(); k++) {
+        for (int pos = 0; pos <= target.size() - k; pos++) {
+            
+            //std::cout << target.substr(pos, k) << " ";
+            std::string s_bac = target.substr(pos, k);
             std::reverse(s_bac.begin(), s_bac.end());
 
-            if (unmap.find(s_bac + std::to_string(i) + std::to_string(length_substr)) != unmap.end()) {
-                count++;
-            } else break;
+            if (unset.count(s_bac + std::to_string(pos) + std::to_string(k))) {
+                    count++;
+                }
+
+            /*
+            // Индексы для углубления:
+            int i = pos;
+            //int j = pos;
+
+            // Процесс углубления:
+            while (i >= 0 && i + k < target.size())
+            {
+                // Индекс i и длина подстроки нужны для поиска ключа
+
+                // Переворачиваем строку, будем искать ее в unmap
+                std::string s_bac = target.substr(i, k);
+                std::reverse(s_bac.begin(), s_bac.end());
+
+                if (unmap.find(s_bac + std::to_string(i) + std::to_string(k)) != unmap.end()) {
+                    count++;
+                } else break;
+            }
+            */
         }
     }
     
@@ -127,7 +114,7 @@ void debug_print_vector(std::vector<T>& arr) {
     std::cout << std::endl;    
 }
 
-void debug_print_unmap(std::unordered_map<std::string, int>& unmap) {
-    for (auto element : unmap)
-        std::cout << element.first << " " << element.second << "\n";
+void debug_print_unset(std::unordered_set<std::string>& unset) {
+    for (auto element : unset)
+        std::cout << element << "\n";
 }
