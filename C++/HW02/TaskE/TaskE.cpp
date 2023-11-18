@@ -4,7 +4,7 @@
 #include <algorithm>
 
 /*
-# Тривиальный алгоритм: O(n*n!)
+# Тривиальный алгоритм: O(n!)
 Реализация тривиального алгоритма:
 
 Мы n! раз переберем все длины возможных подстрок. И каждый раз линейно пройдем по строке.
@@ -34,7 +34,7 @@ s[4] = 'a';
 - долго: строка "а"*10000 будет очень долго обрабатываться - за O(n^2*logn) (худший случай);
 + однако мы теперь учитываем палиндромы четной длины. И даже если их нет, сложность будет O(n*logn);
 + каждый палиндром уникальный.
-? O(n*logn) < O(n*n*logn) < O(n*n!)
+? O(n*logn) < O(n*n*logn) < O(n!)
 
 */
 
@@ -66,25 +66,6 @@ std::vector<int> compute_prefix_func(std::string const& s) {
     return pi;
 }
 
-/**
- * @brief Вычисление хешей префиксов строки за O(длина строки)
- * 
- * @param strg Вектор на хеширование
- * @param p_pow Вектор степеней полинома
- * @return std::vector <long long> возвращает вектор хешей
- */
-std::vector <long long> compute_hash_vector(std::string const& strg, std::vector<long long> const& p_pow) {
-    int n = strg.size();
-    
-    std::vector<long long> h(n, 0); 
-    for (int i = 0; i < n; i++) {
-        h[i] = (strg[i] - 'a' + 1) * p_pow[i];
-        if (i) h[i] += h[i-1];
-    }
-
-    return h;
-}
-
 /**/
 int count_subpalins_trivial(std::string s) {
     int count = 0;
@@ -109,6 +90,75 @@ int count_subpalins_trivial(std::string s) {
     return count;
 }
 
+int getSubpolyCount(std::string s_for) {
+    auto s_bac = s_for;
+    std::reverse(s_bac.begin(), s_bac.end());
+
+    //auto h_for = compute_hash_vector(s_for, );
+    //auto h_bac = compute_hash_vector(s_rev, );
+    
+    
+    return 0;
+}
+
+
+class Subpoly {
+    private:
+        // Инициализация констант
+        const int p = 31; 
+        const int m = 1e9 + 9;
+        
+        // Инициализация данных
+        std::string s_for;
+        std::string s_bac = s_for;
+        std::vector <long long> h_for;
+        std::vector <long long> h_bac;
+
+        /**
+         * @brief Вычисление степеней полинома
+         * 
+         * @param s_size Длина строки
+         * @return std::vector<long long> вектор степеней полинома
+         */
+        std::vector<long long> p_pow(int s_size) {
+            std::vector<long long> p_pow(s_size); 
+            p_pow[0] = 1; 
+            for (int i = 1; i < s_size; i++) 
+                p_pow[i] = (p_pow[i-1] * p);
+            
+            return p_pow;
+        }
+
+        /**
+         * @brief Вычисление хешей префиксов строки за O(длина строки)
+         * 
+         * @param strg Вектор на хеширование
+         * @param p_pow Вектор степеней полинома
+         * @return std::vector <long long> возвращает вектор хешей
+         */
+        std::vector <long long> compute_hash_vector(std::string const& strg, std::vector<long long> const& p_pow) {
+            int n = strg.size();
+
+            std::vector<long long> h(n, 0); 
+            for (int i = 0; i < n; i++) {
+                h[i] = (strg[i] - 'a' + 1) * p_pow[i];
+                if (i) h[i] += h[i-1];
+            }
+
+            return h;
+        }
+
+    public:
+        Subpoly(std::string s) {
+            s_for = s;
+            std::reverse(s_bac.begin(), s_bac.end());
+            h_for = compute_hash_vector(s_for, p_pow(s.size()));
+        }
+
+        get
+
+};
+
 
 int main() {
     // input
@@ -120,7 +170,11 @@ int main() {
     const int m = 1e9 + 9;
     int S = target.size();
 
-    //std::cout << count_subpalins_trivial(target);
+    auto b = target;
+    std::reverse(b.begin(), b.end());
+    std::cout << target << " " << b;
+
+    //Subpoly foo;
 
     return 0;
 }
