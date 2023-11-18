@@ -38,6 +38,10 @@ s[4] = 'a';
 
 */
 
+/*
+
+*/
+
 template <class T>
 void debug_print_vector(std::vector<T>& arr);
 
@@ -155,7 +159,7 @@ class Subpoly {
             h_for = compute_hash_vector(s_for, p_pow(s.size()));
         }
 
-        get
+        //get
 
 };
 
@@ -168,7 +172,7 @@ int main() {
     // Инициализация данных
     const int p = 31; 
     const int m = 1e9 + 9;
-    int S = target.size();
+    //int S = target.size();
 
     auto b = target;
     std::reverse(b.begin(), b.end());
