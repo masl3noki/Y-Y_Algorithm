@@ -75,7 +75,7 @@ int count_subpalins_trivial(std::string s) {
  * @param Fs Хеш-вектор прямого хеширования
  * @param Bs Хеш-вектор обратного хеширования
  */
-void compute_hashes (const std::string& String, std::vector<unsigned long long>& x_pow, std::vector<unsigned long long>& Fs, std::vector<unsigned long long>& Bs) {
+void compute_hashes_vector (const std::string& String, std::vector<unsigned long long>& x_pow, std::vector<unsigned long long>& Fs, std::vector<unsigned long long>& Bs) {
     // Инициализация данных
     const int x = 31; 
     const int p = 1e9 + 9;
@@ -89,12 +89,29 @@ void compute_hashes (const std::string& String, std::vector<unsigned long long>&
     for (int i = 0; i < L; i++)
     {
         long long x_p = std::pow(x, i);
-        Fs[i+1] = (Fs[i] + (String[i] - 'a' + 1) * x_p) % p;
+        Fs[i+1] = (Fs[i] + (String[i] - 'a' + 1) * x_pow[i]) % p;
         Bs[i+1] = (x * Bs[i] + (String[i] - 'a' + 1)) % p;
     }
     
 }
 
+/**/
+void compute_hash_scalar (const std::string& String, std::vector<unsigned long long>& x_pow, unsigned long long& Fs_lr, unsigned long long& Bs_lr, int& l, int& r) {
+    const int p = 1e9 + 9;
+    int L = String.size();
+
+    for (int i = l; i < r; i++)
+    {
+        Fs_lr += (String[i-1] * x_pow[i - l]) % p;
+    }
+
+    for (int i = (L - r); i < (L - l); i++)
+    {
+        Bs_lr += (String[i-1] * x_pow[i - L + l]) % p;
+    }    
+}
+
+/**/
 std::string modify_string (const std::string& s) {
    if (!s.size()) {
      return "";
@@ -116,25 +133,52 @@ int main() {
     // Инициализация данных
     const int x = 31; 
     const int p = 1e9 + 9;
+
+    // Обновление целевой строки:
+    //target = modify_string(target);
     int L = target.size();
 
     std::vector<unsigned long long> Fs(L+1, 0); // Хеш-таблица прямого хеширования
     std::vector<unsigned long long> Bs(L+1, 0); // Хеш-таблица обратного хеширования
-    std::vector<unsigned long long> x_pow(L, 1);
+    std::vector<unsigned long long> x_pow(L, 1); // Вектор степеней полинома
 
-    // Обновление целевой строки:
-    std::string target2 = modify_string(target);
-    std::cout << target << " " << target2;
+    std::cout << target << std::endl;
 
     // Создание хеш-таблицы прямого и обратного хеширования:
-    compute_hashes(target, x_pow, Fs, Bs);
+    compute_hashes_vector(target, x_pow, Fs, Bs);
     
     // Алгоритм поиска подпалиндромов:
+    int count = 0;
+    for (int pos = 1; pos <= L; pos++) // Идем по хеш-векторам, минуя Hash[0] = 0
+    {
+        // Индексы углубления O(logN)
+        int l = pos; // индекс левой границы
+        int r = pos; // индекс правой границы
 
+        while (l >= 1 && r <= L)
+        {
+            // Прямые и обратные хеши подстроки:
+            unsigned long long Fs_lr = 0;
+            unsigned long long Bs_lr = 0;
+            compute_hash_scalar(target, x_pow, Fs_lr, Bs_lr, l, r);
 
-    //auto b = target;
-    //std::reverse(b.begin(), b.end());
-    //std::cout << target << " " << b;
+            //unsigned long long Fs_lr = (Fs[r] - Fs[l]) % p;
+            //unsigned long long Bs_lr = (Bs[r] - Bs[l]) % p;
+            //auto Bs_lr = (x_pow[l] * Bs[r] - x_pow[r] * Bs[l] % p);
+
+            if (Fs_lr == Bs_lr)
+            {
+                if (Fs_lr != 0 && Bs_lr != 0 && target[pos-1] != '|')
+                    count++;
+            } else break;
+
+            // Углубляемся:
+            l -= 1;
+            r += 1;
+        }
+    }
+    
+    std::cout << count;
 
     return 0;
 }
