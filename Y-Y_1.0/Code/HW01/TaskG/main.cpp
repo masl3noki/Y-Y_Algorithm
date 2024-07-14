@@ -1,6 +1,12 @@
 #include <iostream>
 #include <cmath>
 
+/**
+ * @brief Решение задачи
+ * 
+ * @param N, K, M входные данные задачи
+ * @return int сколько частей можно расплавить
+ */
 int smeltery(const int& N, const int& K, const int& M ) {
     int totalParts = 0;
     int remainingMetal = N;

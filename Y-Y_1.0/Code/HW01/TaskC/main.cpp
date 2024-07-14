@@ -2,6 +2,11 @@
 #include <string>
 #include <algorithm>
 
+/**
+ * @brief Решение задачи
+ * 
+ * Парсит телефонный номер и сравнивает его с другими номерами (объектами своего класса)
+ */
 class phoneNumber {
     private:
         std::string uneditedNum = "";

@@ -1,6 +1,12 @@
 #include <iostream>
 #include <string>
 
+/**
+ * @brief Решение задачи
+ * 
+ * @param cmd, t_room, t_cond входные данные задачи
+ * @return int выполнение команды
+ */
 int ac (std::string& cmd, int& t_room, int& t_cond) {
     if (cmd == "auto") 
         // из описания следует, что всегда возвращает t_cond

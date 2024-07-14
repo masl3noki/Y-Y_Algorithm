@@ -2,12 +2,28 @@
 #include <cmath>
 #include <vector>
 
+/**
+ * @brief Проверка на вхождение значения в интервал
+ * 
+ * @param point целевая точка
+ * @param low левая граница интервала
+ * @param high правая граница интервала
+ * 
+ * @return true, если point /in [low, high], иначе false
+ * @note Функция не используется в решении (т.к. Гипотеза #1 не верна)
+ */
 bool isInInterval (int& point, int& low, int& high) {
     if (point < high && point > low)
         return true;
     else return false;
 }
 
+/**
+ * @brief Решение задачи
+ * 
+ * @param a, b, n, m входные данные задачи
+ * @return std::pair<int, int> интервал времени, либо пару {-1, -1}, если Т не права
+ */
 std::pair<int, int> solution(int& a, int& b, int& n, int& m) {
     /* Пока допустим, что Таня (далее Т) всегда права 
     */

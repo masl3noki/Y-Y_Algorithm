@@ -2,6 +2,12 @@
 #include <cmath>
 #include <string>
 
+/**
+ * @brief Решение задачи
+ * 
+ * @param a, b, c входные данные задачи
+ * @return std::string решение, если оно существует и !, "NO SOLUTION", если нет и "MANY SOLUTIONS", если решений бесконечно много
+ */
 std::string solver(int& a, int&b, int&c) {
     // Если коэффициент перед x обнуляется, то либо x \in \varnothing, когда \sqrt{b} != c; либо x \in \mathbb{R} в другом случае
     if (a == 0) {
