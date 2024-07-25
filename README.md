@@ -8,6 +8,7 @@
   - Задача J: подходящий, но не идеальный способ задать [#define INFINITY](https://en.cppreference.com/w/cpp/types/numeric_limits/max)
 
 ДЗ №2: Линейный поиск
+  - Задача A: аналог [list(map(int, input().split()))](https://cplusplus.com/reference/sstream/istringstream/str/) из python, только на плюсах
 
 # Y-Y_4.0
 
