@@ -9,6 +9,7 @@
 
 ДЗ №2: Линейный поиск
   - Задача A: аналог [list(map(int, input().split()))](https://cplusplus.com/reference/sstream/istringstream/str/) из python, только на плюсах
+  - Задача B: [касты в enum](https://en.cppreference.com/w/cpp/language/static_cast)
 
 # Y-Y_4.0
 
