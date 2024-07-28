@@ -4,180 +4,110 @@
 #include <climits>
 #include <sstream>
 
-/* Технические функции */ 
+/* Технические функции и классы */  
 
-// Улучшаем читаемость
-bool operator> (const std::pair<int, int>& l, const std::pair<int, int>& r) {
-    return (static_cast<unsigned long long>(l.first) * 
-            static_cast<unsigned long long>(l.second) > 
-            static_cast<unsigned long long>(r.first) * 
-            static_cast<unsigned long long>(r.second));
+class two {
+protected:
+    int first = INT_MIN;
+    int secnd = INT_MIN;
+
+public:
+    virtual long long mul() const {
+        return {static_cast<long long>(first) * static_cast<long long>(secnd)};
+    }
+
+    virtual void update(const int& el) {
+        if (el >= first) {
+            secnd = first;
+            first = el;
+        } else if (el >= secnd && el != first) {
+            secnd = el;
+        }
+    }
+
+    virtual std::vector<int> get_vector() {
+        return {first, secnd};
+    }
+
+    virtual int get_max() {
+        return std::max(first, secnd);
+    }
+
+    virtual bool isValid() {
+        if (first != INT_MIN) 
+            if (secnd != INT_MIN)
+                return true;
+        return false;            
+    }
 };
 
-bool operator== (const std::pair<int, int>& l, const int& r) {
-    return (static_cast<long long>(l.first) == static_cast<long long>(r) || 
-            static_cast<long long>(l.second)== static_cast<long long>(r));
-};
+class three : public two {
+private:
+    int third = INT_MIN;
 
-bool operator!= (const std::pair<int, int>& l, const int& r) {
-    return (static_cast<long long>(l.first) != static_cast<long long>(r) && 
-            static_cast<long long>(l.second)!= static_cast<long long>(r));
-};
+public:
+    long long mul() const override {
+        return {static_cast<long long>(first) * static_cast<long long>(secnd) * static_cast<long long>(third)};
+    }
 
-long long operator* (const std::pair<int, int>& l, const int& r) {
-    return (static_cast<long long>(l.first) * static_cast<long long>(l.second) * static_cast<long long>(r));
-};
+    void update(const int& el) override {
+        if (el >= first) {
+            third = secnd;
+            secnd = first;
+            first = el;
+        } else if (el >= secnd && el != first) {
+            third = secnd;
+            secnd = el;
+        } else if (el >= third && el != secnd && el != first) {
+            third = el;
+        }
+    }
 
-bool notInPair (const int& to_check, const std::pair<int, int>& l) {
-    if (to_check < l.first) return true;
-    if (to_check < l.second) return true;
-    return false;
-}
-
-/**
- * @brief Решение задачи (кривое, но сойдет)
- * @param seq последовательность
- * 
- * @return Два числа, произведение которых максимально
- */
-std::pair<int, std::pair<int, int>> solution(std::vector<int>& seq) {
-    /*
-    Шаг 1) Найти максимумы для отрицательных и неотрицательных (т.е. положительных и 0) целых чисел;
-    Шаг 2) Сравнить произведения обоих пар и зафиксировать пару, образующую максимальное произведение;
-    Шаг 3) Максимальное произведение будет с этой парой при третьем максимуме, либо 0. Возвращаем ответ.
-        *) Примеров на последовательность длиной 1, 2 нет => игнор;
-        *) Последовательность длиной 3 не обрабатываем, возвращаем элементы.
-        
-    Идея следующая: произведение чисел одного знака дает положительное число, поэтому разбиение на пары.
-        Далее ищем число №3 в порядке приоритета: {max среди положительных чисел}, {цифра 0}, {min среди отрицательных чисел}.
-    Если будем рассматривать пару чисел с разными знаками, то нам придется соответственно искать в порядке приоритета:
-        {max среди отрицательных чисел}, {цифра 0}, {min среди положительных чисел}. Но есть предположение, что это
-        все можно свести к поиску максимальной пары одинакового знака и т.д.
+    std::vector<int> get_vector() override {
+        return {first, secnd, third};
+    }
     
-    В отличии от задачи G, здесь 0 может давать однозначный ответ. Кажется других ситуаций с неоднозначным ответом нет в тестах. 
-    
-    Ощущение, что решение не полное, но оно прошло.    
-    */
-    
-    // Инициализация. "g0" == "greater than 0" и аналогично "l0"
-    std::pair<int, int> g0 = {INT_MIN, INT_MIN}, 
-                        l0 = {INT_MIN, INT_MIN};
-    int third_number = INT_MIN;
-    //int third_n_min = INT_MAX;
+    int get_max() override {
+        return std::max(std::max(first, secnd), third);
+    }
+
+    virtual bool isValid() override {
+        if (first != INT_MIN) 
+            if (secnd != INT_MIN)
+                if (third != INT_MIN)
+                    return true;
+        return false;            
+    }
+};
+
+/* Решение задачи */
+
+std::vector<int> solution_wrong(std::vector<int>& seq) {
+    // Инициализация
+    three max_g0,
+          max_l0;
+    two min_l0;
     
     if (seq.size() < 4) // Проще будет просто вывести оба числа 
-        return {seq[0], {seq[1], seq[2]}};
+        return {seq[0], seq[1], seq[2]};
 
     // Шаг 1)
-    bool flag_Zero = false;
     for (int el : seq) {
-        if (el > 0) { // Поиск при >= 0
-            if (el >= g0.first) {
-                third_number = g0.second;
-                g0.second = g0.first;
-                g0.first = el;
-            } else if (el >= g0.second && el != g0.first) {
-                third_number = g0.second;
-                g0.second = el;
-            } else if (el >= third_number && el != g0.second && el != g0.first)
-                third_number = el;
-            
-        } else 
-        if (el < 0) { // Поиск при < 0
-            if (std::abs(el) >= std::abs(l0.first)) {
-                third_number = l0.second;
-                l0.second = l0.first;
-                l0.first = el;
-            } else if (std::abs(el) >= std::abs(l0.second) && std::abs(el) != std::abs(l0.first)) {
-                third_number = l0.second;
-                l0.second = el;
-            } else if (std::abs(el) >= std::abs(third_number) && std::abs(el) != std::abs(l0.second) && std::abs(el) != std::abs(l0.first))
-                third_number = el;
-        } else flag_Zero = true;
-    }
+        if (el > 0) { // Поиск триплета при >= 0
+            max_g0.update(el);
+        } else { 
+            // Поиск триплета, ближайшего к 0 (включительно)
+            max_l0.update(el);
 
-    if (flag_Zero && third_number < 0) third_number = 0; 
-
-    // Шаг 2) Сравниваем где больше произведение и проверяем на INT_MIN, если какой-то максимум не нашелся.
-    /*        Также ищем нет ли числа, большего, чем third_number среди чисел в неиспользуемой паре. Другими словами:
-              Пусть наибольшее произведение получается из lo. Тогда if (third_number > g0.first) third_number = g0.first.
-              Также проверяем второе число.       
-    */   
-    std::pair<int, int> res_pair;
-    if (g0 == INT_MIN && l0 != INT_MIN) {
-        res_pair = l0;
-        if (g0.first != INT_MIN && third_number < g0.first)
-            third_number = g0.first;
-        if (g0.second != INT_MIN && third_number < g0.second)
-            third_number = g0.second;
-    } else if (g0 != INT_MIN && l0 == INT_MIN)
-        res_pair = g0;
-      else if (g0 == INT_MIN || l0 == INT_MIN) {
-        std::vector<int> res_vec = {0, 0, 0, 0};
-        int i = 0;
-        for (const auto [first, secnd] : {g0, l0}) {
-            if (first != INT_MIN)
-                res_vec[i] = first;
-            i++;
-            if (secnd != INT_MIN)
-                res_vec[i] = secnd;
-            i++;
-        }
-        
-        return{res_vec[0], {res_vec[1], res_vec[2]}};
-    } else {
-        int buffer = third_number;
-        if (g0 * third_number > l0 * third_number) {
-            // Перевес в пользу g0. Если окажется, что произведение l0 и (third_number, большего любого числа из g0),
-            // то вернем уже l0
-            if (third_number < g0.first && (g0 * third_number < l0 * g0.first))
-                third_number = g0.first;
-            if (third_number < g0.second && (g0 * third_number < l0 * g0.second))
-                third_number = g0.second;
-            
-            if (g0 * buffer > l0 * third_number) {
-                res_pair = g0; 
-                third_number = buffer;
-            } else 
-                res_pair = l0;
-        } else {
-            if (third_number < g0.first)
-                third_number = g0.first;
-            if (third_number < g0.second)
-                third_number = g0.second;
-            
-            res_pair = l0;
-            /*
-            if (third_number < l0.first && (l0 * third_number < g0 * l0.first))
-                third_number = l0.first;
-            if (third_number < l0.second && (l0 * third_number < g0 * l0.second))
-                third_number = l0.second;
-            
-            if (l0 * buffer > g0 * third_number) {
-                res_pair = l0;
-                third_number = buffer;
-            } else 
-                res_pair = g0;*/
+            // Поиск альтернативной пары при < 0
+            if (el != 0) { // или все же (el < 0) ?
+                min_l0.update(el);
+            }
         }
     }
 
-    return {third_number, res_pair};
-
-    // Шаг 3)
-    /*  Также ищем нет ли числа, большего, чем third_number среди чисел в неиспользуемой паре. Другими словами:
-        Пусть наибольшее произведение получается из lo. Тогда if (third_number > g0.first) third_number = g0.first.
-        Также проверяем второе число.       
-    */ 
-   /*
-    if (res_pair == g0) {
-        if (third_number < l0.first) third_number = l0.first;
-        if (third_number < l0.second) third_number = l0.second;
-    } else {    
-        if (third_number < g0.first) third_number = g0.first;
-        if (third_number < g0.second) third_number = g0.second;
-    }
-    return {third_number, res_pair};
-    */
+    // Ищем какой-нибудь третий элемент для пары
+    
 }
 
 int main() {
@@ -190,8 +120,8 @@ int main() {
     }
 
     // Формат вывода
-    auto result = solution(seq);
-    std::cout << result.first << " " << (result.second).first << " " << (result.second).second;
+    auto result = solution_wrong(seq);
+    std::cout << result[0] << " " << result[1] << " " << result[2];
 
     return 0;
 }
