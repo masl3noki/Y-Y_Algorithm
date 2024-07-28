@@ -4,7 +4,7 @@
 #include <climits>
 #include <sstream>
 
-/* Технические функции */
+/* Технические функции */ 
 
 // Улучшаем читаемость
 bool operator> (const std::pair<int, int>& l, const std::pair<int, int>& r) {
@@ -23,6 +23,16 @@ bool operator!= (const std::pair<int, int>& l, const int& r) {
     return (static_cast<long long>(l.first) != static_cast<long long>(r) && 
             static_cast<long long>(l.second)!= static_cast<long long>(r));
 };
+
+long long operator* (const std::pair<int, int>& l, const int& r) {
+    return (static_cast<long long>(l.first) * static_cast<long long>(l.second) * static_cast<long long>(r));
+};
+
+bool notInPair (const int& to_check, const std::pair<int, int>& l) {
+    if (to_check < l.first) return true;
+    if (to_check < l.second) return true;
+    return false;
+}
 
 /**
  * @brief Решение задачи (кривое, но сойдет)
@@ -53,13 +63,15 @@ std::pair<int, std::pair<int, int>> solution(std::vector<int>& seq) {
     std::pair<int, int> g0 = {INT_MIN, INT_MIN}, 
                         l0 = {INT_MIN, INT_MIN};
     int third_number = INT_MIN;
+    //int third_n_min = INT_MAX;
     
     if (seq.size() < 4) // Проще будет просто вывести оба числа 
         return {seq[0], {seq[1], seq[2]}};
 
     // Шаг 1)
+    bool flag_Zero = false;
     for (int el : seq) {
-        if (el >= 0) { // Поиск при >= 0
+        if (el > 0) { // Поиск при >= 0
             if (el >= g0.first) {
                 third_number = g0.second;
                 g0.second = g0.first;
@@ -81,8 +93,10 @@ std::pair<int, std::pair<int, int>> solution(std::vector<int>& seq) {
                 l0.second = el;
             } else if (std::abs(el) >= std::abs(third_number) && std::abs(el) != std::abs(l0.second) && std::abs(el) != std::abs(l0.first))
                 third_number = el;
-        }
+        } else flag_Zero = true;
     }
+
+    if (flag_Zero && third_number < 0) third_number = 0; 
 
     // Шаг 2) Сравниваем где больше произведение и проверяем на INT_MIN, если какой-то максимум не нашелся.
     /*        Также ищем нет ли числа, большего, чем third_number среди чисел в неиспользуемой паре. Другими словами:
@@ -90,22 +104,71 @@ std::pair<int, std::pair<int, int>> solution(std::vector<int>& seq) {
               Также проверяем второе число.       
     */   
     std::pair<int, int> res_pair;
-    if (g0 == INT_MIN && l0 != INT_MIN)
+    if (g0 == INT_MIN && l0 != INT_MIN) {
         res_pair = l0;
-    else if (g0 != INT_MIN && l0 == INT_MIN)
+        if (g0.first != INT_MIN && third_number < g0.first)
+            third_number = g0.first;
+        if (g0.second != INT_MIN && third_number < g0.second)
+            third_number = g0.second;
+    } else if (g0 != INT_MIN && l0 == INT_MIN)
         res_pair = g0;
-    else { // Верим, что неоднозначного ответа нет
-        if (g0 > l0)
-            res_pair = g0;
-        else 
+      else if (g0 == INT_MIN || l0 == INT_MIN) {
+        std::vector<int> res_vec = {0, 0, 0, 0};
+        int i = 0;
+        for (const auto [first, secnd] : {g0, l0}) {
+            if (first != INT_MIN)
+                res_vec[i] = first;
+            i++;
+            if (secnd != INT_MIN)
+                res_vec[i] = secnd;
+            i++;
+        }
+        
+        return{res_vec[0], {res_vec[1], res_vec[2]}};
+    } else {
+        int buffer = third_number;
+        if (g0 * third_number > l0 * third_number) {
+            // Перевес в пользу g0. Если окажется, что произведение l0 и (third_number, большего любого числа из g0),
+            // то вернем уже l0
+            if (third_number < g0.first && (g0 * third_number < l0 * g0.first))
+                third_number = g0.first;
+            if (third_number < g0.second && (g0 * third_number < l0 * g0.second))
+                third_number = g0.second;
+            
+            if (g0 * buffer > l0 * third_number) {
+                res_pair = g0; 
+                third_number = buffer;
+            } else 
+                res_pair = l0;
+        } else {
+            if (third_number < g0.first)
+                third_number = g0.first;
+            if (third_number < g0.second)
+                third_number = g0.second;
+            
             res_pair = l0;
+            /*
+            if (third_number < l0.first && (l0 * third_number < g0 * l0.first))
+                third_number = l0.first;
+            if (third_number < l0.second && (l0 * third_number < g0 * l0.second))
+                third_number = l0.second;
+            
+            if (l0 * buffer > g0 * third_number) {
+                res_pair = l0;
+                third_number = buffer;
+            } else 
+                res_pair = g0;*/
+        }
     }
+
+    return {third_number, res_pair};
 
     // Шаг 3)
     /*  Также ищем нет ли числа, большего, чем third_number среди чисел в неиспользуемой паре. Другими словами:
         Пусть наибольшее произведение получается из lo. Тогда if (third_number > g0.first) third_number = g0.first.
         Также проверяем второе число.       
     */ 
+   /*
     if (res_pair == g0) {
         if (third_number < l0.first) third_number = l0.first;
         if (third_number < l0.second) third_number = l0.second;
@@ -114,6 +177,7 @@ std::pair<int, std::pair<int, int>> solution(std::vector<int>& seq) {
         if (third_number < g0.second) third_number = g0.second;
     }
     return {third_number, res_pair};
+    */
 }
 
 int main() {
