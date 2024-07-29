@@ -11,6 +11,8 @@
   - Задача A: аналог [list(map(int, input().split()))](https://cplusplus.com/reference/sstream/istringstream/str/) из python, только на плюсах
   - Задача B: [касты в enum](https://en.cppreference.com/w/cpp/language/static_cast)
   - Задача E: [tuple](https://en.cppreference.com/w/cpp/utility/tuple) как std:pair
+  - Задача G: вероятно можно было бы решить намного легче (как H) с сортировкой
+  - Задача I: составить поле для игры Сапер. Абсолютная база
 
 # Y-Y_4.0
 
