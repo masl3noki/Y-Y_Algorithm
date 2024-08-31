@@ -3,8 +3,13 @@
 #include <string>
 #include <vector>
 #include <utility>
-#include <algorithm>
 
+/**
+ * @brief "Конструктор" мапы, которая считает количество вхождений пар оснований генома
+ * 
+ * @param str геном жителя в виде строки
+ * @param map мапа для парсинга генома
+*/
 void create_set(const std::string& str, std::map<std::string, int>& map) {
     char prev_letter = str[0], next_letter;
     std::string pair;
@@ -17,6 +22,12 @@ void create_set(const std::string& str, std::map<std::string, int>& map) {
         }
 }
 
+/**
+ * @brief Собственная реализация операции пересечения между мапами
+ * 
+ * @param left, right мапы, над которыми проводится операция
+ * @return мапа, которая представляет пересечение множеств
+ */
 std::map<std::string, int> map_intersection(std::map<std::string, int> left, 
                       std::map<std::string, int> right) {
     std::map<std::string, int>::const_iterator il = left.begin();
@@ -50,6 +61,7 @@ int main() {
         create_set(el.first, el.second);
     }
 
+    // Тело
     result = map_intersection(input[0].second, input[1].second);
     
     int count = 0;
