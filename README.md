@@ -8,11 +8,17 @@
   - Задача J: подходящий, но не идеальный способ задать [#define INFINITY](https://en.cppreference.com/w/cpp/types/numeric_limits/max)
 
 ДЗ №2: Линейный поиск
-  - Задача A: аналог [list(map(int, input().split()))](https://cplusplus.com/reference/sstream/istringstream/str/) из python, только на плюсах
+  - Задача A: аналог [list(map(int, input().split()))](https://en.cppreference.com/w/cpp/io/basic_istringstream/str) из python, только на плюсах
   - Задача B: [касты в enum](https://en.cppreference.com/w/cpp/language/static_cast)
   - Задача E: [tuple](https://en.cppreference.com/w/cpp/utility/tuple) как std:pair
   - Задача G: вероятно можно было бы решить намного легче (как H) с сортировкой
   - Задача I: составить поле для игры Сапер. Абсолютная база
+
+ДЗ №3: Множества
+  - Задача D: [std::move](https://en.cppreference.com/w/cpp/utility/move) и оптимизация
+  - Задача F: своя map_intersaction (см. [set_intersection](https://en.cppreference.com/w/cpp/algorithm/set_intersection))
+  - Задача G: реализация [хеш](https://en.cppreference.com/w/cpp/utility/hash)-функции для [unordered_set](https://en.cppreference.com/w/cpp/container/unordered_set) и элемента pair
+  - Задача I: [set_intersection](https://en.cppreference.com/w/cpp/algorithm/set_intersection) и [set_union](https://en.cppreference.com/w/cpp/algorithm/set_union) 
 
 # Y-Y_4.0
 
