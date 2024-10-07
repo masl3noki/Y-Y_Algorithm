@@ -1,4 +1,9 @@
-
+# VS ignores
+DSA_cpp/.vs
+DSA_cpp/x64
+DSA_cpp/*.user
+	
+# General
 **/.idea*
 **/.vscode*
 **/test*
