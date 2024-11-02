@@ -12,3 +12,6 @@ DSA_cpp/*.user
 *.png
 *.jpg
 *.jpeg
+
+# Ignore all solutions for Y-Y 6.0 
+Y-Y_6.0/*
